@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>MVC</title>
+  </head>
+  <body>
+    <div>Task List</div>
+    <ul id="list">
+    </ul>
+    <div>
+      <form id="add-task-form">
+        <input type="text" id="task-name" placeholder="Task name" />
+        <button type="submit">Add</button>
+      </form>
+  </body>
+  <script>
+    model = [{ id: 1, text: "Hello, world!" }];
+
+    function appendToList(task) {
+      const list = document.getElementById("list");
+      const item = document.createElement("li");
+      const removeButton = document.createElement("button");
+        removeButton.innerText = "Remove";
+        removeButton.addEventListener("click", () => {
+          const index = model.findIndex(t => t.id === task.id);
+
+          // NOTE: we are removing the task from the model and the view
+          model.splice(index, 1);
+          item.remove();
+        });
+        item.innerText = task.text;
+        item.appendChild(removeButton);
+        list.appendChild(item);
+    }
+
+    for (const task of model) {
+      appendToList(task);
+    }
+
+    document.querySelector("#add-task-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const taskName = document.querySelector("#task-name").value;
+      document.querySelector("#task-name").value = ""
+      const task = { id: model.length + 1, text: taskName };
+
+      model.push(task);
+      appendToList(task);
+
+      render();
+    });
+  </script>
+</html>

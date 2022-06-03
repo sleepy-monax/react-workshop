@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react@17/umd/react.development.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"
+    ></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+  <script type="text/babel">
+    const Item = ({ item, model, updateModel }) => {
+      return (
+        <li className="flex gap-4">
+          {item.text}
+          <button
+            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+            onClick={() => {
+              const newModel = [...model];
+              const index = newModel.findIndex((t) => t.id === item.id);
+              newModel.splice(index, 1);
+              updateModel(newModel);
+            }}
+          >
+            Remove
+          </button>
+        </li>
+      );
+    };
+
+    const List = ({ model, updateModel }) => {
+      return (
+        <ul>
+          {model.map((item) => (
+            <Item
+              key={item.id}
+              item={item}
+              model={model}
+              updateModel={updateModel}
+            />
+          ))}
+        </ul>
+      );
+    };
+
+    const Form = ({ model, updateModel }) => {
+      let [text, setText] = React.useState("");
+
+      let onSubmit = (e) => {
+        e.preventDefault();
+        if (text.trim() === "") {
+          return;
+        }
+        const newModel = [...model, { id: Date.now(), text }];
+        setText("");
+        updateModel(newModel);
+      };
+
+      return (
+        <form className="flex gap-4" onSubmit={onSubmit}>
+          <input
+            className="border"
+            type="text"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+          />
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            type="submit"
+          >
+            Add
+          </button>
+        </form>
+      );
+    };
+
+    const App = () => {
+      const [model, updateModel] = React.useState([
+        { id: 1, text: "Learn React" },
+        { id: 2, text: "Learn Tailwind" },
+        { id: 3, text: "Learn Next.js" },
+      ]);
+
+      return (
+        <div className="m-4">
+          <h1 className="text-2xl mb-4 mt-6">Task List</h1>
+          <List model={model} updateModel={updateModel} />
+          <Form model={model} updateModel={updateModel} />
+        </div>
+      );
+    };
+
+    ReactDOM.render(<App />, document.getElementById("app"));
+  </script>
+</html>

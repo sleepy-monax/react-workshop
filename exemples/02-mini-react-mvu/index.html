@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+
+  <script>
+    function h(tag, attrs, children = []) {
+      if (typeof tag === "function") {
+        return tag({ ...attrs, children });
+      }
+
+      const element = document.createElement(tag);
+
+      Object.keys(attrs).forEach((key) => {
+        if (key.startsWith("on")) {
+          element.addEventListener(key.substring(2).toLowerCase(), attrs[key]);
+        } else if (key == "className") {
+          element.setAttribute("class", attrs[key]);
+        } else {
+          element[key] = attrs[key];
+        }
+      });
+
+      children.map((child) => {
+        if (typeof child === "string") {
+          element.appendChild(document.createTextNode(child));
+        } else {
+          element.appendChild(child);
+        }
+      });
+
+      return element;
+    }
+
+    function Item({ model, task }) {
+      let onClick = () => {
+        let newModel = [...model];
+        const index = newModel.findIndex((t) => t.id === task.id);
+        newModel.splice(index, 1);
+        updateModel(newModel);
+      };
+
+      return h("li", { className: "flex gap-4" }, [
+        task.text,
+        h("button", { className: "border p-1 rounded", onClick }, ["Remove"]),
+      ]);
+    }
+
+    function List({ model }) {
+      return h("ul", {}, [
+        ...model.map((task) =>
+          h(Item, {
+            model,
+            task,
+          })
+        ),
+      ]);
+    }
+
+    function Form({ model }) {
+      let onSubmit = (e) => {
+        e.preventDefault();
+        let input = document.querySelector("#task-name");
+        const taskName = input.value;
+        input.value = "";
+        const task = { id: model.length + 1, text: taskName };
+        let newModel = [...model, task];
+        updateModel(newModel);
+      };
+
+      return h("form", { id: "add-task-form", onSubmit }, [
+        h("input", {
+          type: "text",
+          id: "task-name",
+          placeholder: "Task name",
+        }),
+        h(
+          "button",
+          {
+            className: "border p-1 rounded",
+            type: "submit",
+          },
+          ["Add"]
+        ),
+      ]);
+    }
+
+    function App({ model }) {
+      return h(
+        "div",
+        {
+          className: "p-4",
+        },
+        [
+          h(
+            "h1",
+            {
+              className: "text-2xl pb-2 pt-4",
+            },
+            ["Task List"]
+          ),
+          h(List, { model }),
+          h(Form, { model }),
+        ]
+      );
+    }
+
+    model = [{ id: 1, text: "Hello, world!" }];
+
+    function updateModel(model) {
+      this.model = model;
+      renderApp();
+    }
+
+    function renderApp() {
+      const app = document.getElementById("app");
+      root = h(App, { model: this.model });
+      app.innerHTML = "";
+      app.appendChild(root);
+    }
+
+    renderApp(model);
+  </script>
+</html>
