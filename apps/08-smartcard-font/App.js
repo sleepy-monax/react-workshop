@@ -1,6 +1,7 @@
 import QRCode from "react-qr-code";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ImageBackground, StyleSheet, Text, Image, Linking, View, TouchableOpacity } from 'react-native';
+import { useFonts } from 'expo-font';
 
 let INFOS = {
   "firsname": "Nicolas",
@@ -35,6 +36,14 @@ function IconLink({ icon, text, url }) {
 }
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    'Fascinate-Regular': require('./assets/Fascinate-Regular.ttf'),
+  });
+
+  if (!fontsLoaded) {
+    return <Text>Loading...</Text>;
+  }
+
   return (
     <ImageBackground
       style={styles.container}
@@ -83,6 +92,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     margin: 10,
     color: '#fff',
+    fontFamily: 'Fascinate-Regular',
   },
   text: {
     fontSize: 20,

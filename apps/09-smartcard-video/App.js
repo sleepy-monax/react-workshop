@@ -1,7 +1,8 @@
 import QRCode from "react-qr-code";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ImageBackground, StyleSheet, Text, Image, Linking, View, TouchableOpacity } from 'react-native';
-import Video from "react-native-video";
+import { Video } from "expo-av";
+import { useEffect, useRef } from "react";
 
 let INFOS = {
   "firsname": "Nicolas",
@@ -18,13 +19,13 @@ let INFOS = {
 function IconLink({ icon, text, url }) {
   return <TouchableOpacity style={{
     flexDirection: 'row',
-    width: '300px',
+    width: 300,
     alignSelf: 'center',
     backgroundColor: '#fff5',
-    borderRadius: '10px',
-    padding: '4px',
+    borderRadius: 10,
+    padding: 4,
     alignItems: 'center',
-    margin: '4px',
+    margin: 4,
   }}>
     <Icon name={icon} size={36} color="#fff" />
     <Text style={styles.text} onPress={
@@ -36,27 +37,38 @@ function IconLink({ icon, text, url }) {
 }
 
 export default function App() {
+  const video = useRef(null);
   return (
     <ImageBackground
       style={styles.container}
       source={require('./assets/background.jpg')}
     >
       <Image style={styles.image} source={require('./assets/userpic.jpg')} />
+
       <Text style={styles.title}>{INFOS.firsname}</Text>
       <Text style={styles.title}>{INFOS.lastname}</Text>
       <Text style={styles.text}>{INFOS.age}</Text>
       <Text style={styles.text} >{INFOS.phone}</Text>
 
       <Video
+        ref={video}
+        style={{ width: 300, height: 300 }}
+        isLooping={true}
+        useNativeControls
+        resizeMode="contain"
         source={require('./assets/background.mp4')} />
 
       <QRCode style={{
         alignSelf: 'center',
         backgroundColor: '#000a',
-        borderRadius: '16px',
-        marginTop: '32px',
-        marginBottom: '32px',
-      }} value={INFOS.email} size={200} bgColor='black' fgColor='white' />
+        borderRadius: 16,
+        marginTop: 32,
+        marginBottom: 32,
+      }}
+        value={INFOS.email}
+        size={200}
+        bgColor='black'
+        fgColor='white' />
 
       <IconLink icon="linkedin" text="LinkedIn" url={INFOS.linkedin} />
       <IconLink icon="twitter" text="Twitter" url={INFOS.twitter} />
@@ -71,7 +83,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexGrow: 1,
     justifyContent: 'center',
-    padding: '16px',
+    padding: 16,
   },
   image: {
     width: 100,
